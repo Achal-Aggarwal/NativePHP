@@ -1,7 +1,7 @@
 {
-    "name": "achal-aggarwal/nativephp",
+    "name": "achal-aggarwal/native-php",
     "type": "library",
-    "description": "Creates mock of native PHP functions",
+    "description": "Creates mock of PHP native functions.",
     "keywords": ["Mock", "native", "php", "functions"],
     "homepage": "https://github.com/Achal-Aggarwal/native-php",
     "license": "GPL-2.0+",
