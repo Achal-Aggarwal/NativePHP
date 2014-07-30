@@ -3,7 +3,7 @@
     "type": "library",
     "description": "Creates mock of native PHP functions",
     "keywords": ["Mock", "native", "php", "functions"],
-    "homepage": "https://github.com/Achal-Aggarwal/NativePHP",
+    "homepage": "https://github.com/Achal-Aggarwal/native-php",
     "license": "GPL-2.0+",
     "require": {
         "php": ">=5.3.10"
