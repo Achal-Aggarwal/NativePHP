@@ -10,9 +10,10 @@
     },
     "autoload": {
         "files" : ["src/helpers.php"],
-    	"psr-4": {
-    		"NativePHP\\": "src/"
-    	}
+        "psr-4": {
+            "NativePHP\\": "src/",
+            "NativePHP\\Example\\": "example/"
+        }
     },
     "authors": [
         {
