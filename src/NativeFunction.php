@@ -23,7 +23,7 @@ class NativeFunction
         $this->clearScope();
     }
 
-    public static function getStub($functionToMock, $inNamespace)
+    public static function getStub($functionToMock, $inNamespace, $substituteFunction = null)
     {
         if (!array_key_exists($functionToMock, self::$_object_map))
         {
@@ -34,6 +34,11 @@ class NativeFunction
         {
             $object = new NativeFunction($functionToMock, $inNamespace);
             self::$_object_map[$functionToMock][$inNamespace] = $object;
+
+            if ($substituteFunction != null) {
+                $object->workAs($substituteFunction);
+            }
+
             $object->generate();
         }
         else
