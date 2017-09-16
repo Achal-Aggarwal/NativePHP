@@ -129,7 +129,7 @@ class NativeFunction
         namespace ' . $ns . '{
             function ' . $mock . '(){
                 $object = \NativePHP\NativeFunction::getStub("' . $mock . '","' . $ns . '");
-                $callback = $object->getSubstitutedFunction(debug_backtrace());
+                $callback = $object->getSubstitutedFunction(debug_backtrace(FALSE, 2));
                 return \NativePHP\call_user_function_param($callback, func_get_args());
             }
         }';
