@@ -10,17 +10,17 @@ class NativeFunction
     private $functionToMock;
     private $substituteFunction;
 
-    private $inClass = null;
-    private $inFunction = null;
+    private $inClasses;
+    private $inFunctions;
 
     private function __construct($functionToMock = null, $inNamespace = '\\')
     {
         $this->functionToMock = $functionToMock;
         $this->inNamespace = $inNamespace;
 
-        $this->substituteFunction = function() {
-            return null;
-        };
+        $this->substituteFunction = function() {};
+
+        $this->clearScope();
     }
 
     public static function getStub($functionToMock, $inNamespace)
@@ -53,15 +53,27 @@ class NativeFunction
         }
     }
 
-    public function inOnly($inClass, $inFunction = null)
+    public function inOnlyFunction($inFunction)
     {
-        //@todo make them array
-        $this->inClass = $inClass;
-        $this->inFunction = $inFunction;
+        $namespacePrefix = "$this->inNamespace\\";
+        $this->inFunctions[$namespacePrefix . $inFunction] = true;
+    }
+
+    public function inOnlyClass($inClass, $inMethod = null)
+    {
+        $namespacePrefix = "$this->inNamespace\\";
+
+        if (!array_key_exists($namespacePrefix . $inClass, $this->inClasses)) {
+            $this->inClasses[$namespacePrefix . $inClass] = array();
+        }
+
+        if (!is_null($inMethod)) {
+            $this->inClasses[$namespacePrefix . $inClass][$inMethod] = true;
+        }
     }
 
     public function clearScope() {
-        $this->inClass = $this->inFunction = null;
+        $this->inClasses = $this->inFunctions = array();
     }
 
     private function getCaller($callTrace) {
@@ -73,41 +85,34 @@ class NativeFunction
         );
     }
 
-    private function isClassSatisfied($caller)
+    private function isClassScopeSatisfied($caller)
     {
-        $classSatisfied = $this->inClass == null;
-
-        if (!$classSatisfied
-            && $this->inClass != null
-            && $caller->callingClass != null
-            && "$this->inNamespace\\$this->inClass" == $caller->callingClass) {
-            $classSatisfied = true;
+        if ($caller->callingClass == null) {
+            return true;
         }
 
-        return $classSatisfied;
+        return array_key_exists($caller->callingClass, $this->inClasses);
     }
 
-    private function isFunctionSatisfied($caller)
+    private function isFunctionScopeSatisfied($caller)
     {
-        $functionSatisfied = $this->inFunction == null;
-
-        if (!$functionSatisfied && $this->inFunction != null) {
-            if ($this->inClass != null && $this->inFunction == $caller->callingFunction) {
-                $functionSatisfied = true;
-            } else if ($this->inClass == null
-                && "$this->inNamespace\\$this->inFunction" == $caller->callingFunction) {
-                $functionSatisfied = true;
-            }
+        if ($caller->callingClass != null
+            && $this->isClassScopeSatisfied($caller))
+        {
+            return count($this->inClasses[$caller->callingClass]) == 0
+            || array_key_exists($caller->callingFunction, $this->inClasses[$caller->callingClass]);
         }
 
-        return $functionSatisfied;
+        return array_key_exists($caller->callingFunction, $this->inFunctions);
     }
 
     public function getSubstitutedFunction($callTrace)
     {
         $caller = $this->getCaller($callTrace);
 
-        if ($this->isClassSatisfied($caller) && $this->isFunctionSatisfied($caller))
+        if (count($this->inClasses) + count($this->inFunctions) == 0
+            || $this->isClassScopeSatisfied($caller)
+            && $this->isFunctionScopeSatisfied($caller))
         {
             return $this->substituteFunction;
         }

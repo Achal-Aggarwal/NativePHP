@@ -31,7 +31,7 @@ namespace NativePHP {
 
         public function testShouldRunStubbedMethodInLimitedMethodScopeOnly()
         {
-            $this->checkDateStub->inOnly(null, 'SomeMethod');
+            $this->checkDateStub->inOnlyFunction('SomeMethod');
 
             $this->assertEquals(
                 true,
@@ -46,7 +46,7 @@ namespace NativePHP {
 
         public function testShouldRunStubbedMethodInLimitedClassScopeOnly()
         {
-            $this->checkDateStub->inOnly('SomeClass', null);
+            $this->checkDateStub->inOnlyClass('SomeClass');
 
             $this->assertEquals(
                 "Month:7, Day:30, Year:2014\n",
@@ -66,7 +66,7 @@ namespace NativePHP {
 
         public function testShouldRunStubbedMethodInLimitedClassMethodScopeOnly()
         {
-            $this->checkDateStub->inOnly('SomeClass', 'SomeClassMethod');
+            $this->checkDateStub->inOnlyClass('SomeClass', 'SomeClassMethod');
 
             $this->assertEquals(
                 "Month:7, Day:30, Year:2014\n",
@@ -80,6 +80,27 @@ namespace NativePHP {
 
             $this->assertEquals(
                 true,
+                \SomeNamespace\SomeMethod()
+            );
+        }
+
+        public function testShouldRunStubbedMethodInMoreThanOneScope()
+        {
+            $this->checkDateStub->inOnlyClass('SomeClass', 'SomeClassMethod');
+            $this->checkDateStub->inOnlyFunction('SomeMethod');
+
+            $this->assertEquals(
+                "Month:7, Day:30, Year:2014\n",
+                (new \SomeNamespace\SomeClass)->SomeClassMethod()
+            );
+
+            $this->assertEquals(
+                true,
+                (new \SomeNamespace\SomeClass)->SomeMethod()
+            );
+
+            $this->assertEquals(
+                "Month:7, Day:30, Year:2014\n",
                 \SomeNamespace\SomeMethod()
             );
         }
