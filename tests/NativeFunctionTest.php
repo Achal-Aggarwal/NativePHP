@@ -19,12 +19,12 @@ namespace NativePHP {
         public function testShouldRunStubbedMethodInsteadOfActualOne()
         {
             $this->assertEquals(
-                "Month:7, Day:30, Year:2014\n",
+                "Month:7, Day:30, Year:2014",
                 (new \SomeNamespace\SomeClass)->SomeClassMethod()
             );
 
             $this->assertEquals(
-                "Month:7, Day:30, Year:2014\n",
+                "Month:7, Day:30, Year:2014",
                 \SomeNamespace\SomeMethod()
             );
         }
@@ -39,7 +39,7 @@ namespace NativePHP {
             );
 
             $this->assertEquals(
-                "Month:7, Day:30, Year:2014\n",
+                "Month:7, Day:30, Year:2014",
                 \SomeNamespace\SomeMethod()
             );
         }
@@ -49,12 +49,12 @@ namespace NativePHP {
             $this->checkDateStub->inOnlyClass('SomeClass');
 
             $this->assertEquals(
-                "Month:7, Day:30, Year:2014\n",
+                "Month:7, Day:30, Year:2014",
                 (new \SomeNamespace\SomeClass)->SomeClassMethod()
             );
 
             $this->assertEquals(
-                "Month:7, Day:30, Year:2014\n",
+                "Month:7, Day:30, Year:2014",
                 (new \SomeNamespace\SomeClass)->SomeMethod()
             );
 
@@ -69,7 +69,7 @@ namespace NativePHP {
             $this->checkDateStub->inOnlyClass('SomeClass', 'SomeClassMethod');
 
             $this->assertEquals(
-                "Month:7, Day:30, Year:2014\n",
+                "Month:7, Day:30, Year:2014",
                 (new \SomeNamespace\SomeClass)->SomeClassMethod()
             );
 
@@ -90,7 +90,7 @@ namespace NativePHP {
             $this->checkDateStub->inOnlyFunction('SomeMethod');
 
             $this->assertEquals(
-                "Month:7, Day:30, Year:2014\n",
+                "Month:7, Day:30, Year:2014",
                 (new \SomeNamespace\SomeClass)->SomeClassMethod()
             );
 
@@ -100,7 +100,7 @@ namespace NativePHP {
             );
 
             $this->assertEquals(
-                "Month:7, Day:30, Year:2014\n",
+                "Month:7, Day:30, Year:2014",
                 \SomeNamespace\SomeMethod()
             );
         }
@@ -110,7 +110,7 @@ namespace NativePHP {
             $this->checkDateStub->workAs(array('\NativePHP\Substitutes','staticCustom'));
 
             $this->assertEquals(
-                "Month:7, Day:30, Year:2014\n",
+                "Month:7, Day:30, Year:2014",
                 \SomeNamespace\SomeMethod()
             );
         }
@@ -118,12 +118,24 @@ namespace NativePHP {
         public function testShouldAcceptAnonymousFunctionAsSubstitute()
         {
             $this->checkDateStub->workAs(function ($m, $d, $y) {
-                return "Month:$m, Day:$d, Year:$y\n";
+                return "Month:$m, Day:$d, Year:$y";
             });
 
             $this->assertEquals(
-                "Month:7, Day:30, Year:2014\n",
+                "Month:7, Day:30, Year:2014",
                 \SomeNamespace\SomeMethod()
+            );
+        }
+
+        public function testShouldBeAbleToStubDate()
+        {
+            $dateStub = \NativePHP\NativeFunction::getStub(
+                'date', 'SomeNamespace');
+            $dateStub->workAs(function () {return 'CURRENT_DATE_AND_TIME';});
+
+            $this->assertEquals(
+                'CURRENT_DATE_AND_TIME',
+                \SomeNamespace\now()
             );
         }
 
@@ -137,12 +149,12 @@ namespace NativePHP {
 
         public static function staticCustom($m, $d, $y)
         {
-            return "Month:$m, Day:$d, Year:$y\n";
+            return "Month:$m, Day:$d, Year:$y";
         }
 
         public function custom($m, $d, $y)
         {
-            return "Month:$m, Day:$d, Year:$y\n";
+            return "Month:$m, Day:$d, Year:$y";
         }
     }
 }
@@ -160,5 +172,9 @@ namespace SomeNamespace{
 
     function SomeMethod(){
         return checkdate(7,30,2014);
+    }
+
+    function now() {
+        return date("Y-m-d H:i:s");
     }
 }
