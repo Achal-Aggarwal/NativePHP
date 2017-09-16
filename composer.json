@@ -1,7 +1,7 @@
 {
     "name": "achal-aggarwal/native-php",
     "type": "library",
-    "description": "Creates mock of PHP native functions.",
+    "description": "Creates stub of PHP native functions.",
     "keywords": ["Mock", "native", "php", "functions"],
     "homepage": "https://github.com/Achal-Aggarwal/native-php",
     "license": "GPL-2.0+",
@@ -20,5 +20,8 @@
             "homepage": "http://www.achalaggarwal.net",
             "role": "Developer"
         }
-    ]
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^5.7"
+    }
 }
