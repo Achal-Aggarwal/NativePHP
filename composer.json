@@ -9,6 +9,7 @@
         "php": ">=5.3.10"
     },
     "autoload": {
+        "files" : ["src/helpers.php"],
     	"psr-4": {
     		"NativePHP\\": "src/"
     	}

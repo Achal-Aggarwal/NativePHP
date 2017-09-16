@@ -83,9 +83,41 @@ namespace NativePHP {
                 \SomeNamespace\SomeMethod()
             );
         }
+
+        public function testShouldAcceptClassStaticFunctionAsSubstitute()
+        {
+            $this->checkDateStub->workAs(array('\NativePHP\Substitutes','staticCustom'));
+
+            $this->assertEquals(
+                "Month:7, Day:30, Year:2014\n",
+                \SomeNamespace\SomeMethod()
+            );
+        }
+
+        public function testShouldAcceptAnonymousFunctionAsSubstitute()
+        {
+            $this->checkDateStub->workAs(function ($m, $d, $y) {
+                return "Month:$m, Day:$d, Year:$y\n";
+            });
+
+            $this->assertEquals(
+                "Month:7, Day:30, Year:2014\n",
+                \SomeNamespace\SomeMethod()
+            );
+        }
+
+        protected function tearDown()
+        {
+            $this->checkDateStub->clearScope();
+        }
     }
 
     class Substitutes {
+
+        public static function staticCustom($m, $d, $y)
+        {
+            return "Month:$m, Day:$d, Year:$y\n";
+        }
 
         public function custom($m, $d, $y)
         {

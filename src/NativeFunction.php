@@ -46,7 +46,11 @@ class NativeFunction
 
     public function workAs($substituteFunction)
     {
-        $this->substituteFunction = $substituteFunction;
+        if (is_user_function_callable($substituteFunction)) {
+            $this->substituteFunction = $substituteFunction;
+        } else {
+            throw new \Exception("Substitution function is not callable.");
+        }
     }
 
     public function inOnly($inClass, $inFunction = null)
@@ -54,6 +58,10 @@ class NativeFunction
         //@todo make them array
         $this->inClass = $inClass;
         $this->inFunction = $inFunction;
+    }
+
+    public function clearScope() {
+        $this->inClass = $this->inFunction = null;
     }
 
     private function getCaller($callTrace) {
@@ -117,7 +125,7 @@ class NativeFunction
             function ' . $mock . '(){
                 $object = \NativePHP\NativeFunction::getStub("' . $mock . '","' . $ns . '");
                 $callback = $object->getSubstitutedFunction(debug_backtrace());
-                return call_user_func_array($callback, func_get_args());
+                return \NativePHP\call_user_function_param($callback, func_get_args());
             }
         }';
 
